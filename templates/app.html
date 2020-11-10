@@ -50,10 +50,21 @@
                                     <div class="col">
                                         <img src="static/img/upload_map.JPG"
                                             style="width:700px;height:400px;margin-left:30px;" alt="Responsive image">
+                                            <form action="/upload-image" method="POST" enctype="multipart/form-data">
+
+                                                <div class="form-group">
+                                                  <div class="custom-file">
+                                                    <input type="file" class="custom-file-input" name="image" id="image">
+                                                  </div>
+                                                </div>
+                                        
+                                                <button type="submit" class="btn btn-primary">Upload</button>
+                                        
+                                              </form>
                                     </div>
                                     <div class="w-100"></div>
                                     <div class="col">
-                                        <button type="button" class="btn btn-lg btn-block"
+                                        <button id="kml" type="button" class="btn btn-lg btn-block"
                                             style="margin-top:30px;color:white;background-color: #3486eb;">Start</button>
                                     </div>
                                 </div>
@@ -310,6 +321,20 @@
         return false;
       });
     });
+</script>
+
+</script>
+<script type=text/javascript>
+$(function() {
+  $('button#kml').on('click', function(e) {
+    e.preventDefault()
+    $.getJSON('/kml',
+        function(data) {
+      //do nothing
+    });
+    return false;
+  });
+});
 </script>
 </body>
 

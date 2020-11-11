@@ -1,6 +1,6 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, jsonify
 import HyD
-from sensors import Sensor
+from sensors import Sensor as s
 import os
 from pykml import parser
 
@@ -56,13 +56,13 @@ def start():
 @app.route('/left')
 def left():
     print("Move left")
-    p.moveLeft("1500")
+    p.moveLeft("1000")
     return ("nothing")
 
 @app.route('/right')
 def right():
     print("Move right")
-    p.moveRight("1500")
+    p.moveRight("1000")
     return ("nothing")
 
 @app.route('/stop')
@@ -102,6 +102,20 @@ def kml_run():
     print("print kml")
     print(kml)
     return ("nothing")
+
+@app.route('/updateData', methods=['POST'])
+def updateData():
+    us1 = p.getSensorData(s.ULTRASONIC1)[1]
+    us2 = p.getSensorData(s.ULTRASONIC2)[1]
+    us3 = p.getSensorData(s.ULTRASONIC3)[1]
+    us4 = p.getSensorData(s.ULTRASONIC4)[1]
+    pitch = p.getSensorData(s.IMU_PITCH)[1]
+    roll = p.getSensorData(s.IMU_ROLL)[1]
+    yaw = p.getSensorData(s.IMU_YAW)[1]
+    bearing = p.getSensorData(s.COMPASS_BEARING)[1]
+    batt_1 = p.getSensorData(s.BATTERY1_VOLTAGE)[1]
+    batt_2 = p.getSensorData(s.BATTERY2_VOLTAGE)[1]
+    return jsonify(us1, us2 , us3,us4, pitch, roll, yaw, bearing, batt_1, batt_2)
 
 if __name__ == ' __main__':
     app.debug = True

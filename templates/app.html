@@ -135,7 +135,7 @@
                         <!-- END RECENT PURCHASES -->
                     </div>
                     <div class="col-md-6">
-                        <!-- MULTI CHARTS -->
+                        <!-- Data -->
                         <div class="panel panel-headline">
                             <div class="panel-heading">
                                 <h3 class="panel-title">Data</h3>
@@ -147,12 +147,12 @@
                             </div>
                             <div class="panel-body">
                                 <div class="row">
-                                    <!-- Firsr row -->
+                                    <!-- First row -->
                                     <div class="col-md-3">
                                         <div class="metric">
                                             <span class="icon"><i class="fas fa-wave-square"></i></span>
                                             <p>
-                                                <span class="number">213.8</span>
+                                                <span class="number" id="data1"></span>
                                                 <span class="title">Ultrasonic 1</span>
                                             </p>
                                         </div>
@@ -161,7 +161,7 @@
                                         <div class="metric">
                                             <span class="icon"><i class="fas fa-wave-square"></i></span>
                                             <p>
-                                                <span class="number">101.8</span>
+                                                <span class="number" id="data2"></span>
                                                 <span class="title">Ultrasonic 2</span>
                                             </p>
                                         </div>
@@ -170,7 +170,7 @@
                                         <div class="metric">
                                             <span class="icon"><i class="fas fa-wave-square"></i></span>
                                             <p>
-                                                <span class="number">193.3</span>
+                                                <span class="number" id="data3"></span>
                                                 <span class="title">Ultrasonic 3</span>
                                             </p>
                                         </div>
@@ -179,7 +179,7 @@
                                         <div class="metric">
                                             <span class="icon"><i class="fas fa-wave-square"></i></span>
                                             <p>
-                                                <span class="number">88.5</span>
+                                                <span class="number" id="data4"></span>
                                                 <span class="title">Ultrasonic 4</span>
                                             </p>
                                         </div>
@@ -190,7 +190,7 @@
                                         <div class="metric">
                                             <span class="icon"><i class="fas fa-location-arrow"></i></span>
                                             <p>
-                                                <span class="number">3.3</span>
+                                                <span class="number" id="data5"></span>
                                                 <span class="title">Pitch</span>
                                             </p>
                                         </div>
@@ -199,7 +199,7 @@
                                         <div class="metric">
                                             <span class="icon"><i class="fas fa-location-arrow"></i></span>
                                             <p>
-                                                <span class="number">-7.23</span>
+                                                <span class="number" id="data6"></span>
                                                 <span class="title">Yaw</span>
                                             </p>
                                         </div>
@@ -208,7 +208,7 @@
                                         <div class="metric">
                                             <span class="icon"><i class="fas fa-location-arrow"></i></span>
                                             <p>
-                                                <span class="number">-43.11</span>
+                                                <span class="number" id="data7"></span>
                                                 <span class="title">Roll</span>
                                             </p>
                                         </div>
@@ -217,7 +217,7 @@
                                         <div class="metric">
                                             <span class="icon"><i class="fas fa-compass"></i></span>
                                             <p>
-                                                <span class="number">90</span>
+                                                <span class="number" id="data8"></span>
                                                 <span class="title">Bearing</span>
                                             </p>
                                         </div>
@@ -228,7 +228,7 @@
                                         <div class="metric">
                                             <span class="icon"><i class="fas fa-battery-full"></i></span>
                                             <p>
-                                                <span class="number">10</span>
+                                                <span class="number" id="data9"></span>
                                                 <span class="title">Battery 1</span>
                                             </p>
                                         </div>
@@ -237,7 +237,7 @@
                                         <div class="metric">
                                             <span class="icon"><i class="fas fa-battery-full"></i></span>
                                             <p>
-                                                <span class="number">10</span>
+                                                <span class="number" id="data10"></span>
                                                 <span class="title">Battery 2</span>
                                             </p>
                                         </div>
@@ -246,7 +246,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- END MULTI CHARTS -->
+                        <!-- END Data -->
                     </div>
                 </div>
             </div>
@@ -262,6 +262,7 @@
     <!-- Javascript -->
     <script src="static/vendor/jquery/jquery.min.js"></script>
     <script src="static/scripts/klorofil-common.js"></script>
+    <!-- Start of controls script -->
     <script type=text/javascript>
         $(function() {
           $('button#left').on('click', function(e) {
@@ -322,8 +323,9 @@
       });
     });
 </script>
-
+<!-- End of Control Script -->
 </script>
+<!-- Script to run the program -->
 <script type=text/javascript>
 $(function() {
   $('button#kml').on('click', function(e) {
@@ -336,6 +338,34 @@ $(function() {
   });
 });
 </script>
+
+<!-- Script to update data on realtime -->
+<script>
+    $(function () {
+       window.setInterval(function () {
+          loadNew()
+       }, 300)
+       function loadNew() {
+          $.ajax({
+             url: "/updateData",
+             type: "POST",
+             dataType: "json",
+             success: function (data) {
+                document.getElementById('data1').innerHTML = data[0]
+                document.getElementById('data2').innerHTML = data[1]
+                document.getElementById('data3').innerHTML = data[2]
+                document.getElementById('data4').innerHTML = data[3]
+                document.getElementById('data5').innerHTML = data[4]
+                document.getElementById('data6').innerHTML = data[5]
+                document.getElementById('data7').innerHTML = data[6]
+                document.getElementById('data8').innerHTML = data[7]
+                document.getElementById('data9').innerHTML = data[8]
+                document.getElementById('data10').innerHTML = data[9]
+             }
+          });
+       }
+    });
+ </script>
 </body>
 
 </html>

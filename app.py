@@ -7,7 +7,7 @@ from pykml import parser
 app = Flask(__name__)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
-app.config["IMAGE_UPLOADS"] = os.path.join(APP_ROOT,"map")
+app.config["map_UPLOADS"] = os.path.join(APP_ROOT,"map")
 p = HyD.HyDrone("awwa234.ddns.net", 51234)
 kml = ""
 
@@ -79,20 +79,20 @@ def sample():
 
 
 
-@app.route("/upload-image", methods=["GET", "POST"])
-def upload_image():
+@app.route("/upload-map", methods=["GET", "POST"])
+def upload_map():
     global kml
     if request.method == "POST":
 
         if request.files:
 
-            image = request.files["image"]
+            map = request.files["map"]
 
-            image.save(os.path.join(app.config["IMAGE_UPLOADS"], image.filename))
+            map.save(os.path.join(app.config["map_UPLOADS"], map.filename))
 
             print("map saved")
-            print(getcoordinatesfromKML(os.path.join(app.config["IMAGE_UPLOADS"], image.filename)))
-            kml = getcoordinatesfromKML(os.path.join(app.config["IMAGE_UPLOADS"], image.filename))
+            print(getcoordinatesfromKML(os.path.join(app.config["map_UPLOADS"], map.filename)))
+            kml = getcoordinatesfromKML(os.path.join(app.config["map_UPLOADS"], map.filename))
             return redirect(request.url)
 
     return render_template("app.html")

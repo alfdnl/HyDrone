@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 app.config["map_UPLOADS"] = os.path.join(APP_ROOT,"map")
-p = HyD.HyDrone("100.19.1.19", 51234)
+p = HyD.HyDrone("100.96.1.19", 51234)
 filename = ""
 
 def getcoordinatesfromKML(path_to_kml):
@@ -111,13 +111,13 @@ def upload_map():
     test2 = gm.split_lake(poly,6e-04)
     
 
-    # c_lat = p.getSensorData(s.GPS_LATITUDE)
-    # time.sleep(0.3)
-    # c_lon = p.getSensorData(s.GPS_LONGITUDE)
-    # time.sleep(0.3)
+    ## get map with robot online
+    # allData = p.getSensorData(s.ALL_DATA)
+    # c_lat = allData[8].split(":")[1]
+    # c_lon = allData[9].split(":")[1]
     # m = gm.printMap([c_lat,c_lon],100,poly)
 
-    ## Get map
+    ## Get map with robot offline
     m = gm.printMap([3.1189078118594447,101.65878139637647],100,poly)
 
     ## Add marker
@@ -143,10 +143,9 @@ def map():
     if 'map.html' not in os.listdir('templates'):
         print("no map")
         # Connected to robot
-        # lat = p.getSensorData(s.GPS_LATITUDE)
-        # time.sleep(0.3)
-        # lon = p.getSensorData(s.GPS_LONGITUDE)
-        # time.sleep(0.3)
+        # allData = p.getSensorData(s.ALL_DATA)
+        # lat = allData[8].split(":")[1]
+        # lon = allData[9].split(":")[1]        
         # m = folium.Map([lat,lon], zoom_start=100, tiles='cartodbpositron')
         # folium.Marker([lat, lon],color = 'black').add_to(m)
 
@@ -160,27 +159,18 @@ def map():
 
 @app.route('/updateData', methods=['POST'])
 def updateData():
-    time.sleep(0.3)
-    us1 = p.getSensorData(s.ULTRASONIC1)[1]
-    time.sleep(0.3)
-    us2 = p.getSensorData(s.ULTRASONIC2)[1]
-    time.sleep(0.3)
-    us3 = p.getSensorData(s.ULTRASONIC3)[1]
-    time.sleep(0.3)
-    us4 = p.getSensorData(s.ULTRASONIC4)[1]
-    time.sleep(0.3)
-    pitch = p.getSensorData(s.IMU_PITCH)[1]
-    time.sleep(0.3)
-    roll = p.getSensorData(s.IMU_ROLL)[1]
-    time.sleep(0.3)
-    yaw = p.getSensorData(s.IMU_YAW)[1]
-    time.sleep(0.3)
-    bearing = p.getSensorData(s.COMPASS_BEARING)[1]
-    time.sleep(0.3)
-    batt_1 = p.getSensorData(s.BATTERY1_VOLTAGE)[1]
-    time.sleep(0.3)
-    batt_2 = p.getSensorData(s.BATTERY2_VOLTAGE)[1]
-    time.sleep(0.3)
+
+    allData = p.getSensorData(s.ALL_DATA)
+    us1 = allData[0].split(":")[1]
+    us2 = allData[1].split(":")[1]
+    us3 = allData[2].split(":")[1]
+    us4 = allData[3].split(":")[1]
+    pitch = allData[4].split(":")[1]
+    roll = allData[5].split(":")[1]
+    yaw = allData[6].split(":")[1]
+    bearing = allData[14].split(":")[1]
+    batt_1 = allData[12].split(":")[1]
+    batt_2 = allData[13].split(":")[1]
     return jsonify(us1, us2 , us3,us4, pitch, roll, yaw, bearing, batt_1, batt_2)
 
 if __name__ == ' __main__':

@@ -7,6 +7,7 @@ import folium
 import time
 import numpy as np, random, operator, pandas as pd, matplotlib.pyplot as plt
 import genetic_algorithm_TSP as GA
+from folium.features import DivIcon
 
 ## Get coordinates
 lon,lat = gm.getcoordinatesfromKML("map\\test.kml")
@@ -23,7 +24,16 @@ markers = []
 for idx,i in enumerate(test2):
         print((i.centroid.y, i.centroid.x))
         markers.append((i.centroid.y, i.centroid.x))
-
+m = gm.printMap([3.1189078118594447,101.65878139637647],100,poly)
+for idx,i in enumerate(test2):
+    folium.GeoJson(i).add_to(m)
+    folium.Marker([i.centroid.y, i.centroid.x]).add_to(m)
+    folium.Marker([i.centroid.y,i.centroid.x], icon=DivIcon(
+        icon_size=(10,10),
+        icon_anchor=(4,63),
+        html='<div style="font-size: 14pt; color : red">{}</div>'.format(idx),
+        )).add_to(m)
+m
 
 
 
@@ -55,3 +65,17 @@ print(type(bestpath))
 for idx,i in enumerate(bestpath):
     # bestroute.append(mapping_dict[i])
     print(mapping_dict[i])
+
+m = folium.Map([3.1189078118594447,101.65878139637647], zoom_start=100, tiles='cartodbpositron')
+## Add marker
+for idx,i in enumerate(bestpath):
+    print(mapping_dict[i])
+    folium.Marker([i.x,i.y]).add_to(m)
+    folium.Marker([i.x,i.y], icon=DivIcon(
+        icon_size=(10,10),
+        icon_anchor=(4,63),
+        html='<div style="font-size: 14pt; color : red">{}</div>'.format(idx),
+        )).add_to(m)
+m
+    # m.save('templates/map.html')
+

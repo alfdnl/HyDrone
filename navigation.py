@@ -4,6 +4,14 @@ import numpy as np
 from numpy import arctan2,random,sin,cos,degrees
 import pyproj
 
+
+## TO-Do
+# 1. Make the codes runs in the loop
+# 2. Use the real data set
+# 3. Make the code uses the real function to move the robot.
+# 4. Make a function to check wheter it has arrived to the next marker
+# 5. Make the robot move continously until it reached back to it current position.
+
 geodesic = pyproj.Geod(ellps='WGS84')
 
 # Functions
@@ -48,3 +56,8 @@ while robot_direction != marker_direction:
         print(robot_direction)
 
 print("Direction matched!\n",robot_direction)
+# Move for 5 secs and repeat until target reached
+
+# To check that the robot is at the marker
+# calculate the distance between the marker and the robot
+# If the distance is less than a meter, check as visited.

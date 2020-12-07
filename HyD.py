@@ -15,11 +15,9 @@ class HyDrone:
 
     def startMotors(self):
         """ Start the Motors, the program will sleep for 7 seconds to start the motors
-
             Parameters
             ----------
             No Parameters Needed
-
             Returns
             -------
             String
@@ -31,11 +29,9 @@ class HyDrone:
 
     def stopMotors(self):
         """ Stop the Motors
-
                     Parameters
                     ----------
                     No Parameters Needed
-
                     Returns
                     -------
                     String
@@ -45,11 +41,9 @@ class HyDrone:
 
     def recordVideo(self):
         """ Start Recording Video, the video will be saved on any USB storage with HyDrone name attached to the Robot
-
                     Parameters
                     ----------
                     No Parameters Needed
-
                     Returns
                     -------
                     String
@@ -59,11 +53,9 @@ class HyDrone:
 
     def stopRecoding(self):
         """ Stop Recording Video, the video will be saved on any USB storage with HyDrone name attached to the Robot
-
                             Parameters
                             ----------
                             No Parameters Needed
-
                             Returns
                             -------
                             String
@@ -73,7 +65,6 @@ class HyDrone:
 
     def moveRight(self, speed):
         """ Move to the Right, will move turn the left motor
-
                             Parameters
                             ----------
                             speed : int
@@ -87,7 +78,6 @@ class HyDrone:
 
     def moveLeft(self, speed):
         """ Move to the Left, will move turn the right motor
-
                             Parameters
                             ----------
                             speed : int
@@ -98,10 +88,23 @@ class HyDrone:
                                 robot is moving left speed
                             """
         self.sendMessage("CONTROL,MOVE_LEFT," + speed + "")
+    
+    def moveForward(self, speed):
+        """ Move forward, will move turn the both motor
+                            Parameters
+                            ----------
+                            speed1 : int
+                                the speed must be between 1000 to 1500
+                            
+                            Returns
+                            -------
+                            String
+                                robot is moving left speed
+                            """
+        self.sendMessage("CONTROL,MOVE_FORWARD," + speed + ","+ speed)
 
     def collectWaterSample(self, container):
         """ Start Collecting Water to the Container
-
                                 Parameters
                                 ----------
                                 container : int
@@ -113,9 +116,25 @@ class HyDrone:
                                 """
         return self.sendMessage("CONTROL,COLLECT_SAMPLE," + container + "")
 
+    def rollMove(self, distance, direction):
+        """ Start Moving UnderWater Roller
+                                        Parameters
+                                        ----------
+                                        distance : int
+                                            the distance is the number of the holes of the encoder you want it
+                                            to move one circle is equal to 48 holes, 48*2 is 96
+                                            set is to 96 for one circle
+                                        direction : str
+                                            to set the direction of the movement "U" for up "D" for down
+                                        Returns
+                                        -------
+                                        String
+                                            roll moving to $distance $direction
+                                        """
+        return self.sendMessage("CONTROL,ROLLMOVE,"+distance+","+direction+"")
+
     def getSensorData(self, sensorName):
         """ get Sensor data
-
                                 Parameters
                                 ----------
                                 sensorName : Sensor

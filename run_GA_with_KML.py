@@ -33,7 +33,7 @@ for idx,i in enumerate(test2):
         icon_anchor=(4,63),
         html='<div style="font-size: 14pt; color : red">{}</div>'.format(idx),
         )).add_to(m)
-
+m
 
 
 

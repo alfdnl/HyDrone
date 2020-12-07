@@ -58,6 +58,6 @@ while robot_direction != marker_direction:
 print("Direction matched!\n",robot_direction)
 # Move for 5 secs and repeat until target reached
 
-# To check that the robot is at the mark er 
+# To check that the robot is at the marker
 # calculate the distance between the marker and the robot
 # If the distance is less than a meter, check as visited.

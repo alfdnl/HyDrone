@@ -174,7 +174,8 @@ def kml_run():
     lat = float(allData[8].split(":")[1])
     lon = float(allData[9].split(":")[1]        )
     home = (lat,lon)
-    print(home)
+    # print(home)
+
     ## Initiate the marker class
     markersList = []
     markersList.append(GA.City(x=home[0], y=home[1]))
@@ -188,7 +189,7 @@ def kml_run():
     for idx, i in enumerate(markersList):
         mapping_dict[i] = idx
 
-    print(mapping_dict)
+    # print(mapping_dict)
 
     bestpath = GA.geneticAlgorithm(population=markersList,home=home, popSize=100, eliteSize=20, mutationRate=0.01, generations=500)
 
@@ -223,7 +224,7 @@ def map():
         m = folium.Map([lat,lon], zoom_start=100, tiles='cartodbpositron')
         folium.Marker([lat, lon],color = 'black').add_to(m)
 
-        # Not connected to robot
+        # Not connected to rob ot
         # m = folium.Map([3.1189078118594447,101.65878139637647], zoom_start=100, tiles='cartodbpositron')
         # folium.CircleMarker([3.1189078118594447, 101.65878139637647],color = 'red',fill_color='red').add_to(m)
         return m._repr_html_()

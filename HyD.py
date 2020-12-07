@@ -104,7 +104,7 @@ class HyDrone:
         self.sendMessage("CONTROL,MOVE_FORWARD," + speed + ","+ speed)
 
     def collectWaterSample(self, container):
-        """ Start Collecting Water to the Container
+        """ Start Collecting Water to the Containe r
                                 Parameters
                                 ----------
                                 container : int

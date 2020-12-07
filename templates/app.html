@@ -48,7 +48,8 @@
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col">
-                                        <iframe class="map", src="/map" width="800" height="500"></iframe>
+                                        <div class="embed-responsive embed-responsive-16by9">
+                                        <iframe class="map", src="/map" width="800" height="500"></iframe></div>
                                             <form action="/upload-map" method="POST" enctype="multipart/form-data">
 
                                                 <div class="form-group">
@@ -77,16 +78,16 @@
                         <div class="panel panel-headline">
                             <div class="panel-heading">
                                 <h3 class="panel-title">Live Footage</h3>
-                                <div class="right">
-                                    <button type="button" class="btn-toggle-collapse"><i
-                                            class="lnr lnr-chevron-up"></i></button>
-                                    <button type="button" class="btn-remove"><i class="lnr lnr-cross"></i></button>
-                                </div>
+                           
+                                <button onclick="myFunction()">Try it</button>
+
                             </div>
                             <div class="panel-body">
-                                <div class="row">
+                                
+                                
+                                <div class="row" id="myDIV">
                                     <div class="col">
-                                        <img src="http://100.96.1.19:8081/?action=stream" />
+                                        <img src="http://100.96.1.19:8081/?action=stream" class = "img-responsive"/>
                                     </div>
 
                                 </div>
@@ -123,9 +124,8 @@
                                     <div class="col-sm-4">
                                         <button id=sample type="button" class="btn btn-lg btn-block">Take
                                             Sample</button>
+                                        <button id=forward type="button" class="btn btn-lg btn-block">move forward</button>
                                     </div>
-
-
                                 </div>
                             </div>
                         </div>
@@ -135,6 +135,10 @@
                         <!-- Data -->
                         <div class="panel panel-headline">
                             <div class="panel-heading">
+                            <input type="button" value="On" id="onoff" onclick="onoff();">
+                            <input type="button" value="Off" id="onoff" onclick="stop()">
+                            
+
                                 <h3 class="panel-title">Data</h3>
                                 <div class="right">
                                     <button type="button" class="btn-toggle-collapse"><i
@@ -257,9 +261,11 @@
 
     <!-- END WRAPPER -->
     <!-- Javascript -->
+
     <script src="static/vendor/jquery/jquery.min.js"></script>
     <script src="static/scripts/klorofil-common.js"></script>
     <!-- Start of controls script -->
+    
     <script type=text/javascript>
         $(function() {
           $('button#left').on('click', function(e) {
@@ -320,6 +326,18 @@
       });
     });
 </script>
+<script type=text/javascript>
+    $(function() {
+      $('button#forward').on('click', function(e) {
+        e.preventDefault()
+        $.getJSON('/forward',
+            function(data) {
+          //do nothing
+        });
+        return false;
+      });
+    });
+</script>
 <!-- End of Control Script -->
 </script>
 <!-- Script to run the program -->
@@ -337,7 +355,7 @@ $(function() {
 </script>
 
 <!-- Script to update data on realtime -->
-<script>
+<!-- <script>
     $(function () {
        window.setInterval(function () {
           loadNew()
@@ -362,7 +380,52 @@ $(function() {
           });
        }
     });
- </script>
+ </script> -->
+ <!-- On off Button -->
+ <script >
+
+    function loadNew() {
+          $.ajax({
+             url: "/updateData",
+             type: "POST",
+             dataType: "json",
+             success: function (data) {
+                document.getElementById('data1').innerHTML = data[0]
+                document.getElementById('data2').innerHTML = data[1]
+                document.getElementById('data3').innerHTML = data[2]
+                document.getElementById('data4').innerHTML = data[3]
+                document.getElementById('data5').innerHTML = data[4]
+                document.getElementById('data6').innerHTML = data[5]
+                document.getElementById('data7').innerHTML = data[6]
+                document.getElementById('data8').innerHTML = data[7]
+                document.getElementById('data9').innerHTML = data[8]
+                document.getElementById('data10').innerHTML = data[9]
+             }
+          });
+       }
+    function onoff(){
+        myVar = setInterval(loadNew, 300); 
+        };
+    function stop(){
+        console.log("puki")
+        console.log(myVar);
+        window.clearInterval(myVar)
+    }
+    
+    </script>
+    <script>
+        function myFunction() {
+          var x = document.getElementById("myDIV");
+          if (x.style.display === "none") {
+            x.style.display = "block";
+          } else {
+            x.style.display = "none";
+          }
+        }
+        </script>
+
+
+    
 </body>
 
 </html>

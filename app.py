@@ -150,6 +150,7 @@ def upload_map():
 
 @app.route("/kml", methods=["GET", "POST"])
 def kml_run():
+    
     ## Get coordinates
     lon,lat = gm.getcoordinatesfromKML(os.path.join(app.config["map_UPLOADS"],filename))
 
@@ -168,13 +169,13 @@ def kml_run():
 
     ## GEt current coordinates of robot
     # This coordinate will also be included in Genetic Algorithm #
-    # Add later #
     # this will be the home coordinate
     allData = p.getSensorData(s.ALL_DATA)
     lat = float(allData[8].split(":")[1])
     lon = float(allData[9].split(":")[1]        )
     home = (lat,lon)
     print(home)
+
     ## Initiate the marker class
     markersList = []
     markersList.append(GA.City(x=home[0], y=home[1]))

@@ -15,6 +15,13 @@
     <link rel="stylesheet" href="static/css/main.css">
     <!-- GOOGLE FONTS -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+    <!-- LEAFLET -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+    crossorigin=""></script>
 
 </head>
 
@@ -49,18 +56,16 @@
                                 <div class="row">
                                     <div class="col">
                                         <div class="embed-responsive embed-responsive-16by9">
-                                        <iframe class="map", src="/map" width="800" height="500"></iframe></div>
-                                            <form action="/upload-map" method="POST" enctype="multipart/form-data">
-
-                                                <div class="form-group">
-                                                  <div class="custom-file">
+                                            <div id="mapid" style = "width:900px; height:580px;"></div>
+                                        </div>
+                                        <form action="/upload-map" method="POST" enctype="multipart/form-data">
+                                            <div class="form-group">
+                                                <div class="custom-file">
                                                     <input type="file" class="custom-file-input" name="map" id="map">
-                                                  </div>
                                                 </div>
-                                        
-                                                <button type="submit" class="btn btn-primary">Upload</button>
-                                        
-                                              </form>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Upload</button>
+                                        </form>
                                     </div>
                                     <div class="w-100"></div>
                                     <div class="col">
@@ -78,16 +83,16 @@
                         <div class="panel panel-headline">
                             <div class="panel-heading">
                                 <h3 class="panel-title">Live Footage</h3>
-                           
+
                                 <button onclick="myFunction()">Try it</button>
 
                             </div>
                             <div class="panel-body">
-                                
-                                
+
+
                                 <div class="row" id="myDIV">
                                     <div class="col">
-                                        <img src="http://100.96.1.19:8081/?action=stream" class = "img-responsive"/>
+                                        <img src="http://100.96.1.19:8081/?action=stream" class="img-responsive" />
                                     </div>
 
                                 </div>
@@ -124,7 +129,8 @@
                                     <div class="col-sm-4">
                                         <button id=sample type="button" class="btn btn-lg btn-block">Take
                                             Sample</button>
-                                        <button id=forward type="button" class="btn btn-lg btn-block">move forward</button>
+                                        <button id=forward type="button" class="btn btn-lg btn-block">move
+                                            forward</button>
                                     </div>
                                 </div>
                             </div>
@@ -135,9 +141,9 @@
                         <!-- Data -->
                         <div class="panel panel-headline">
                             <div class="panel-heading">
-                            <input type="button" value="On" id="onoff" onclick="onoff();">
-                            <input type="button" value="Off" id="onoff" onclick="stop()">
-                            
+                                <input type="button" value="On" id="onoff" onclick="onoff();">
+                                <input type="button" value="Off" id="onoff" onclick="stop()">
+
 
                                 <h3 class="panel-title">Data</h3>
                                 <div class="right">
@@ -264,8 +270,8 @@
 
     <script src="static/vendor/jquery/jquery.min.js"></script>
     <script src="static/scripts/klorofil-common.js"></script>
+
     <!-- Start of controls script -->
-    
     <script type=text/javascript>
         $(function() {
           $('button#left').on('click', function(e) {
@@ -326,7 +332,7 @@
       });
     });
 </script>
-<script type=text/javascript>
+    <script type=text/javascript>
     $(function() {
       $('button#forward').on('click', function(e) {
         e.preventDefault()
@@ -338,10 +344,11 @@
       });
     });
 </script>
-<!-- End of Control Script -->
-</script>
-<!-- Script to run the program -->
-<script type=text/javascript>
+    <!-- End of Control Script -->
+    </script>
+
+    <!-- Script to run the program -->
+    <script type=text/javascript>
 $(function() {
   $('button#kml').on('click', function(e) {
     e.preventDefault()
@@ -354,78 +361,84 @@ $(function() {
 });
 </script>
 
-<!-- Script to update data on realtime -->
-<!-- <script>
-    $(function () {
-       window.setInterval(function () {
-          loadNew()
-       }, 300)
-       function loadNew() {
-          $.ajax({
-             url: "/updateData",
-             type: "POST",
-             dataType: "json",
-             success: function (data) {
-                document.getElementById('data1').innerHTML = data[0]
-                document.getElementById('data2').innerHTML = data[1]
-                document.getElementById('data3').innerHTML = data[2]
-                document.getElementById('data4').innerHTML = data[3]
-                document.getElementById('data5').innerHTML = data[4]
-                document.getElementById('data6').innerHTML = data[5]
-                document.getElementById('data7').innerHTML = data[6]
-                document.getElementById('data8').innerHTML = data[7]
-                document.getElementById('data9').innerHTML = data[8]
-                document.getElementById('data10').innerHTML = data[9]
-             }
-          });
-       }
-    });
- </script> -->
- <!-- On off Button -->
- <script >
+    <!-- On off Button -->
+    <script>
 
-    function loadNew() {
-          $.ajax({
-             url: "/updateData",
-             type: "POST",
-             dataType: "json",
-             success: function (data) {
-                document.getElementById('data1').innerHTML = data[0]
-                document.getElementById('data2').innerHTML = data[1]
-                document.getElementById('data3').innerHTML = data[2]
-                document.getElementById('data4').innerHTML = data[3]
-                document.getElementById('data5').innerHTML = data[4]
-                document.getElementById('data6').innerHTML = data[5]
-                document.getElementById('data7').innerHTML = data[6]
-                document.getElementById('data8').innerHTML = data[7]
-                document.getElementById('data9').innerHTML = data[8]
-                document.getElementById('data10').innerHTML = data[9]
-             }
-          });
-       }
-    function onoff(){
-        myVar = setInterval(loadNew, 300); 
+        function loadNew() {
+            $.ajax({
+                url: "/updateData",
+                type: "POST",
+                dataType: "json",
+                success: function (data) {
+                    document.getElementById('data1').innerHTML = data[0]
+                    document.getElementById('data2').innerHTML = data[1]
+                    document.getElementById('data3').innerHTML = data[2]
+                    document.getElementById('data4').innerHTML = data[3]
+                    document.getElementById('data5').innerHTML = data[4]
+                    document.getElementById('data6').innerHTML = data[5]
+                    document.getElementById('data7').innerHTML = data[6]
+                    document.getElementById('data8').innerHTML = data[7]
+                    document.getElementById('data9').innerHTML = data[8]
+                    document.getElementById('data10').innerHTML = data[9]
+                }
+            });
+        }
+        function onoff() {
+            myVar = setInterval(loadNew, 300);
         };
-    function stop(){
-        console.log("puki")
-        console.log(myVar);
-        window.clearInterval(myVar)
-    }
-    
+        function stop() {
+            console.log(myVar);
+            window.clearInterval(myVar)
+        }
+
     </script>
+
     <script>
         function myFunction() {
-          var x = document.getElementById("myDIV");
-          if (x.style.display === "none") {
-            x.style.display = "block";
-          } else {
-            x.style.display = "none";
-          }
+            var x = document.getElementById("myDIV");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
         }
-        </script>
-
-
+    </script>
     
+    <!-- Script to show leaflet map -->
+    <script>
+        var mymap = L.map('mapid').setView([0, 0], 6);
+        L.tileLayer('https://{s}.google.com/vt/lyrs=s&?x={x}&y={y}&z={z}', {
+            maxZoom: 22,
+            subdomains: ['mt0','mt1','mt2','mt3'],
+        }).addTo(mymap);
+
+        let marker = L.marker([0, 0]).addTo(mymap);
+
+        const api_url = 'https://api.wheretheiss.at/v1/satellites/25544';
+
+        let firstTime = true;
+
+        async function getISS() {
+        const response = await fetch(api_url);
+        const data = await response.json();
+        const { latitude, longitude } = data;
+
+        // Always set the view to current lat lon and zoom!
+        // mymap.setView([latitude, longitude]);
+        marker.setLatLng([latitude, longitude]);
+
+        document.getElementById('lat').textContent = latitude.toFixed(2);
+        document.getElementById('lon').textContent = longitude.toFixed(2);
+        }
+
+        getISS();
+        setInterval(getISS, 1000);
+    </script>
+
+
+
+
+
 </body>
 
 </html>

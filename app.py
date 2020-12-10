@@ -212,28 +212,28 @@ def kml_run():
     print("Done")
     return render_template("app.html")
 
-@app.route('/map',  methods=["GET", "POST"])
-def map():
-    if 'map.html' not in os.listdir('templates'):
-        print("no map")
+# @app.route('/map',  methods=["GET", "POST"])
+# def map():
+#     if 'map.html' not in os.listdir('templates'):
+#         print("no map")
 
-        # Connected to robot
-        allData = p.getSensorData(s.ALL_DATA)
-        lat = allData[8].split(":")[1]
-        lon = allData[9].split(":")[1]        
-        m = folium.Map([lat,lon], zoom_start=100, tiles='cartodbpositron')
-        folium.Marker([lat, lon],color = 'black').add_to(m)
+#         # Connected to robot
+#         allData = p.getSensorData(s.ALL_DATA)
+#         lat = allData[8].split(":")[1]
+#         lon = allData[9].split(":")[1]        
+#         m = folium.Map([lat,lon], zoom_start=100, tiles='cartodbpositron')
+#         folium.Marker([lat, lon],color = 'black').add_to(m)
 
-        # Not connected to robot
-        # m = folium.Map([3.1189078118594447,101.65878139637647], zoom_start=100, tiles='cartodbpositron')
-        # folium.CircleMarker([3.1189078118594447, 101.65878139637647],color = 'red',fill_color='red').add_to(m)
-        return m._repr_html_()
+#         # Not connected to robot
+#         # m = folium.Map([3.1189078118594447,101.65878139637647], zoom_start=100, tiles='cartodbpositron')
+#         # folium.CircleMarker([3.1189078118594447, 101.65878139637647],color = 'red',fill_color='red').add_to(m)
+#         return m._repr_html_()
 
-    elif 'map2.html' in os.listdir('templates'):
-        return render_template('map2.html')
+#     elif 'map2.html' in os.listdir('templates'):
+#         return render_template('map2.html')
 
-    else:
-        return render_template('map.html')
+#     else:
+#         return render_template('map.html')
 
 @app.route('/updateData', methods=['POST'])
 def updateData():

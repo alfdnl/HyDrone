@@ -406,33 +406,42 @@ $(function() {
     
     <!-- Script to show leaflet map -->
     <script>
-        var mymap = L.map('mapid').setView([0, 0], 6);
+
+        var mymap = L.map('mapid').setView([2.119570613676185, 101.65657144167113], 18);
         L.tileLayer('https://{s}.google.com/vt/lyrs=s&?x={x}&y={y}&z={z}', {
             maxZoom: 22,
             subdomains: ['mt0','mt1','mt2','mt3'],
         }).addTo(mymap);
+        
+        const api_url = 'http://127.0.0.1:5000/get_location';
+        
+        let firstTime = true;
 
         let marker = L.marker([0, 0]).addTo(mymap);
 
-        const api_url = 'https://api.wheretheiss.at/v1/satellites/25544';
+        // const api_url = '${window.origin}/get_location';
 
-        let firstTime = true;
+        // let firstTime = true;
 
-        async function getISS() {
+        async function getLocation() {
+
         const response = await fetch(api_url);
         const data = await response.json();
-        const { latitude, longitude } = data;
+
+        var latitude = data[0];
+        var longitude = data[1];
 
         // Always set the view to current lat lon and zoom!
-        // mymap.setView([latitude, longitude]);
+        if (firstTime) {
+            mymap.setView([latitude, longitude]);
+        }
+        firstTime=false;
         marker.setLatLng([latitude, longitude]);
-
-        document.getElementById('lat').textContent = latitude.toFixed(2);
-        document.getElementById('lon').textContent = longitude.toFixed(2);
         }
 
-        getISS();
-        setInterval(getISS, 1000);
+        getLocation();
+        // setInterval(getISS, 1000);
+        
     </script>
 
 

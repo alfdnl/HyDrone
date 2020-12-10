@@ -172,7 +172,7 @@ def kml_run():
     # this will be the home coordinate
     allData = p.getSensorData(s.ALL_DATA)
     lat = float(allData[8].split(":")[1])
-    lon = float(allData[9].split(":")[1]        )
+    lon = float(allData[9].split(":")[1])
     home = (lat,lon)
     print(home)
 
@@ -234,6 +234,15 @@ def kml_run():
 
 #     else:
 #         return render_template('map.html')
+
+@app.route('/get_location', methods=['POST','GET'])
+def updateLocation():
+
+    allData = p.getSensorData(s.ALL_DATA)
+    lat = float(allData[8].split(":")[1])
+    lon = float(allData[9].split(":")[1])
+    print(allData)
+    return jsonify(lat, lon)
 
 @app.route('/updateData', methods=['POST'])
 def updateData():

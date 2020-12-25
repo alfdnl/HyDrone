@@ -58,7 +58,7 @@
                                         <div class="embed-responsive embed-responsive-16by9">
                                             <div id="mapid" style = "width:900px; height:580px;"></div>
                                         </div>
-                                        <form action="/upload-map" method="POST" enctype="multipart/form-data">
+                                        <form action="/" method="POST" enctype="multipart/form-data">
                                             <div class="form-group">
                                                 <div class="custom-file">
                                                     <input type="file" class="custom-file-input" name="map" id="map">
@@ -66,11 +66,16 @@
                                             </div>
                                             <button type="submit" class="btn btn-primary">Upload</button>
                                         </form>
+                                        <input type="button" value="On" id="onGPS" onclick="onGPS();">
+                                        <input type="button" value="Off" id="onGPS" onclick="offGPS()">
                                     </div>
                                     <div class="w-100"></div>
                                     <div class="col">
-                                        <button id="kml" type="button" class="btn btn-lg btn-block"
+                                        <form action="/kml" method="post"> <!-- or method="post" -->
+                                            <input type="range" min="1" max="100" value="{{ email }}" name="slider">                                            
+                                        <button type="submit" id="kml" type="button" class="btn btn-lg btn-block"
                                             style="margin-top:30px;color:white;background-color: #3486eb;">Start</button>
+                                        </form>
                                     </div>
                                 </div>
 
@@ -348,7 +353,7 @@
     </script>
 
     <!-- Script to run the program -->
-    <script type=text/javascript>
+    <!-- <script type=text/javascript>
 $(function() {
   $('button#kml').on('click', function(e) {
     e.preventDefault()
@@ -359,7 +364,7 @@ $(function() {
     return false;
   });
 });
-</script>
+</script> -->
 
     <!-- On off Button -->
     <script>
@@ -407,7 +412,7 @@ $(function() {
     <!-- Script to show leaflet map -->
     <script>
 
-        var mymap = L.map('mapid').setView([2.119570613676185, 101.65657144167113], 18);
+        var mymap = L.map('mapid').setView([3.119629449776096, 101.65642710502878], 18);
         L.tileLayer('https://{s}.google.com/vt/lyrs=s&?x={x}&y={y}&z={z}', {
             maxZoom: 22,
             subdomains: ['mt0','mt1','mt2','mt3'],
@@ -419,29 +424,109 @@ $(function() {
 
         let marker = L.marker([0, 0]).addTo(mymap);
 
-        // const api_url = '${window.origin}/get_location';
-
-        // let firstTime = true;
-
         async function getLocation() {
+            const response = await fetch(api_url);
+            const data = await response.json();
+            var latitude = data[0];
+            var longitude = data[1];
 
-        const response = await fetch(api_url);
-        const data = await response.json();
-
-        var latitude = data[0];
-        var longitude = data[1];
-
-        // Always set the view to current lat lon and zoom!
-        if (firstTime) {
-            mymap.setView([latitude, longitude]);
-        }
-        firstTime=false;
-        marker.setLatLng([latitude, longitude]);
+            // Always set the view to current lat lon and zoom!
+            if (firstTime) {
+                mymap.setView([latitude, longitude]);
+            }
+            firstTime=false;
+            marker.setLatLng([latitude, longitude]);
         }
 
         getLocation();
-        // setInterval(getISS, 1000);
+
+        function onGPS() {
+            gps = setInterval(getLocation, 1000);
+        };
+        function offGPS() {
+            console.log(gps);
+            window.clearInterval(gps)
+        };
+        // myVar = setInterval(getLocation, 1000);
+        // window.clearInterval(myVar)
+
+        // Get sampling stations data
+        var test = '{{data}}';
+       
+
+        // Clean the string
+        console.log(test.replace(/[\[\(\)\]]/g, ''));
+        test = test.replace(/[\[\(\)\]]/g, '');
+        test = test.split(",");
+        console.log(test.length);
         
+        // get the lat and lon in a list
+        var lat = [];
+        var lon = [];
+
+        for (x in test){
+            console.log(test[x]);
+            if (x%2==0){
+                lat.push(test[x])
+            }
+            else{lon.push(test[x])}            
+        }
+
+        // Create new marker
+        console.log(lon)
+        for (i = 0; i < lon.length; i++) {
+            console.log(lat[i],lon[i]);
+            L.marker([lat[i], lon[i]]).addTo(mymap);
+        }
+
+        // Set the number icon for water sampling pathway
+        var marker_tes = '{{marker}}';
+        var bestpath = '{{bestpath}}';
+        console.log(marker_tes);
+        console.log(bestpath);
+
+        // Clean the string
+        marker_tes = marker_tes.replace(/[\[\(\)\]]/g, '');
+        marker_tes = marker_tes.split(",");
+        console.log(marker_tes.length);
+
+        bestpath = bestpath.replace(/[\[\(\)\]]/g, '');
+        bestpath = bestpath.split(",");
+        console.log(bestpath.length);
+
+        // get the lat and lon in a list
+        var lat = [];
+        var lon = [];
+        for (x in bestpath){
+            console.log(bestpath[x]);
+            if (x%2==0){
+                lat.push(bestpath[x])
+            }
+            else{lon.push(bestpath[x])}            
+        }
+
+         
+
+        // Create new marker
+        console.log(lon)
+        for (i = 0; i < lon.length; i++) {
+            console.log(lat[i],lon[i]);
+            L.marker([lat[i], lon[i]]).addTo(mymap);
+        }
+
+        for (i = 0; i < marker_tes.length; i++) {
+            console.log(marker_tes[i]);
+            L.marker([lat[i], lon[i]],
+            {icon:L.divIcon({ 
+                iconSize: new L.Point(50, 50), 
+                html: '<div style="font-size: 14pt; color : red">'+marker_tes[i]+'</div>',
+                className: 'dummy'
+                    })}
+            ).addTo(mymap);
+        }
+
+
+                    
     </script>
 
 

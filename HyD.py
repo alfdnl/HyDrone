@@ -51,7 +51,7 @@ class HyDrone:
                     """
         return self.sendMessage("CONTROL,START_RECORDING")
 
-    def stopRecoding(self):
+    def stopVideoRecoding(self):
         """ Stop Recording Video, the video will be saved on any USB storage with HyDrone name attached to the Robot
                             Parameters
                             ----------
@@ -62,9 +62,40 @@ class HyDrone:
                                 video recording stop
                             """
         return self.sendMessage("CONTROL,STOP_RECORDING")
+   
+    
+    def moveForward(self, leftSpeed, rightSpeed):
+        """ Move Backward, will move/turn the both motor forward
+                            Parameters
+                            ----------
+                            leftSpeed : int
+                                the speed must be between 1000 to 1500
+                            rightSpeed : int
+                                the speed must be between 1000 to 1500
+                            Returns
+                            -------
+                            String
+                                robot is moving forward speed
+                            """
+        return self.sendMessage("CONTROL,MOVE_FORWARD," + leftSpeed + "," + rightSpeed + "")
 
+    def moveBackward(self, leftSpeed, rightSpeed):
+        """ Move Backward, will move/turn the both motor backward
+                            Parameters
+                            ----------
+                            leftSpeed : int
+                                the speed must be between 1000 to 1500
+                            rightSpeed : int
+                                the speed must be between 1000 to 1500
+                            Returns
+                            -------
+                            String
+                                robot is moving back speed
+                            """
+        return self.sendMessage("CONTROL,MOVE_BACKWARD," + str(leftSpeed) + "," + str(rightSpeed) + "")
+    
     def moveRight(self, speed):
-        """ Move to the Right, will move turn the left motor
+        """ Move to the Right, will move/turn the left motor
                             Parameters
                             ----------
                             speed : int
@@ -88,20 +119,6 @@ class HyDrone:
                                 robot is moving left speed
                             """
         self.sendMessage("CONTROL,MOVE_LEFT," + speed + "")
-    
-    def moveForward(self, speed):
-        """ Move forward, will move turn the both motor
-                            Parameters
-                            ----------
-                            speed1 : int
-                                the speed must be between 1000 to 1500
-                            
-                            Returns
-                            -------
-                            String
-                                robot is moving left speed
-                            """
-        self.sendMessage("CONTROL,MOVE_FORWARD," + speed + ","+ speed)
 
     def collectWaterSample(self, container):
         """ Start Collecting Water to the Container
@@ -180,9 +197,21 @@ class HyDrone:
             return self.sendMessage("GET,ALL").split(",")[16].split(":")
         elif "recstate" in sensorName.value:
             return self.sendMessage("GET,ALL").split(",")[17].split(":")
+        elif "calibratState" in sensorName.value:
+            return self.sendMessage("GET,ALL").split(",")[18].split(":")
+        elif "dataRecordState" in sensorName.value:
+            return self.sendMessage("GET,ALL").split(",")[19].split(":")
         elif "all" in sensorName.value:
             return self.sendMessage("GET,ALL").split(",")
+        elif "allimu" in sensorName.value:
+            return self.sendMessage("GET,ALIM").split(",")
+
+    def startDataRecord(self):
+        self.sendMessage("CONTROL,RECORD_DATA")
+
+    def stopDataRecord(self):
+        self.sendMessage("CONTROL,STOP_RECORD_DATA")
+
 
     # TODO
     # More Functions for Controlling
-

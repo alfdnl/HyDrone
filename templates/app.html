@@ -15,10 +15,24 @@
     <link rel="stylesheet" href="static/css/main.css">
     <!-- GOOGLE FONTS -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+    <!-- LEAFLET -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+    crossorigin=""></script>
+    <style>
+        .alert-error {
+          padding: 8px;
+          background-color: red;
+          color: white;
+        }
+      </style>
 
 </head>
 
-<body>
+<body onload=display_ct();>
     <!-- WRAPPER -->
 
     <!-- NAVBAR -->
@@ -34,11 +48,16 @@
         <div class="main-content">
             <div class="container-fluid">
                 <div class="row">
+                  
                     <div class="col-md-6">
                         <!-- Live Map -->
+                        {% for message in get_flashed_messages() %}
+                        <div class="alert-error">Error: {{ message }}</div>
+                        {% endfor %}
                         <div class="panel panel-headline">
                             <div class="panel-heading">
-                                <h3 class="panel-title">Live Map</h3>
+                                <h3 class="panel-title">Live Map </h3>
+                                <span id = 'date'></span>
                                 <div class="right">
                                     <button type="button" class="btn-toggle-collapse"><i
                                             class="lnr lnr-chevron-up"></i></button>
@@ -49,23 +68,28 @@
                                 <div class="row">
                                     <div class="col">
                                         <div class="embed-responsive embed-responsive-16by9">
-                                        <iframe class="map", src="/map" width="800" height="500"></iframe></div>
-                                            <form action="/upload-map" method="POST" enctype="multipart/form-data">
-
-                                                <div class="form-group">
-                                                  <div class="custom-file">
+                                            <div id="mapid" style = "width:900px; height:580px;"></div>
+                                        </div>
+                                        <form action="/" method="POST" enctype="multipart/form-data">
+                                            <div class="form-group">
+                                                <div class="custom-file">
                                                     <input type="file" class="custom-file-input" name="map" id="map">
-                                                  </div>
                                                 </div>
-                                        
-                                                <button type="submit" class="btn btn-primary">Upload</button>
-                                        
-                                              </form>
+                                            </div>
+                                            <input type="range" min="1" max="25" value="{{ email }}" name="slider" , id= 'myRange'>
+                                            <p>Value: <span id="demo"></span></p>
+                                            <button type="submit" class="btn btn-primary">Upload</button>
+                                        </form>
+                                        <input type="button" value="On" id="onGPS" onclick="onGPS();">
+                                        <input type="button" value="Off" id="onGPS" onclick="offGPS()">
                                     </div>
                                     <div class="w-100"></div>
                                     <div class="col">
-                                        <button id="kml" type="button" class="btn btn-lg btn-block"
+                                        <form action="/kml" method="post"> <!-- or method="post" -->
+                                                                                        
+                                        <button type="submit" id="kml" type="button" class="btn btn-lg btn-block"
                                             style="margin-top:30px;color:white;background-color: #3486eb;">Start</button>
+                                        </form>
                                     </div>
                                 </div>
 
@@ -78,16 +102,16 @@
                         <div class="panel panel-headline">
                             <div class="panel-heading">
                                 <h3 class="panel-title">Live Footage</h3>
-                           
+
                                 <button onclick="myFunction()">Try it</button>
 
                             </div>
                             <div class="panel-body">
-                                
-                                
+
+
                                 <div class="row" id="myDIV">
                                     <div class="col">
-                                        <img src="http://100.96.1.19:8081/?action=stream" class = "img-responsive"/>
+                                        <img src="http://100.96.1.19:8081/?action=stream" class="img-responsive" />
                                     </div>
 
                                 </div>
@@ -114,30 +138,36 @@
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-sm-4">
-                                        <button id=left type="button" class="btn btn-lg btn-block">Left</button>
-                                        <button id=right type="button" class="btn btn-lg btn-block">Right</button>
+                                        <button id=start type="button" class="btn btn-lg btn-block">Start Motor</button>
+                                        <button id=left type="button" class="btn btn-lg btn-block">Move Left</button>
+                                        <button id=find_north type="button" class="btn btn-lg btn-block">Find North</button>
                                     </div>
                                     <div class="col-sm-4">
-                                        <button id=start type="button" class="btn btn-lg btn-block">Start</button>
-                                        <button id=stop type="button" class="btn btn-lg btn-block">Stop</button>
-                                    </div>
-                                    <div class="col-sm-4">
+                                        <button id=forward type="button" class="btn btn-lg btn-block">Move
+                                            Forward</button>
                                         <button id=sample type="button" class="btn btn-lg btn-block">Take
-                                            Sample</button>
-                                        <button id=forward type="button" class="btn btn-lg btn-block">move forward</button>
+                                                Sample</button>
+                                        <button id=backward type="button" class="btn btn-lg btn-block">Move Backward
+                                            </button>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button id=stop type="button" class="btn btn-lg btn-block">Stop Motor</button>
+                                        <button id=right type="button" class="btn btn-lg btn-block">Move Right</button>
+                                        <button id=find_south type="button" class="btn btn-lg btn-block">Find South</button>
+                                        
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- END RECENT PURCHASES -->
+                        <!-- END CONTROL -->
                     </div>
                     <div class="col-md-6">
                         <!-- Data -->
                         <div class="panel panel-headline">
                             <div class="panel-heading">
-                            <input type="button" value="On" id="onoff" onclick="onoff();">
-                            <input type="button" value="Off" id="onoff" onclick="stop()">
-                            
+                                <input type="button" value="On" id="onoff" onclick="onoff();">
+                                <input type="button" value="Off" id="onoff" onclick="stop()">
+
 
                                 <h3 class="panel-title">Data</h3>
                                 <div class="right">
@@ -261,11 +291,37 @@
 
     <!-- END WRAPPER -->
     <!-- Javascript -->
+    <script type="text/javascript"> 
+        function display_c(){
+        var refresh=1000; // Refresh rate in milli seconds
+        mytime=setTimeout('display_ct()',refresh)
+        }
+        
+        function display_ct() {
+        var x = new Date()
+        document.getElementById('date').innerHTML = x;
+        display_c();
+         }
+    </script>
+
+
+    
+        
+
+    <script>
+        var slider = document.getElementById("myRange");
+        var output = document.getElementById("demo");
+        output.innerHTML = slider.value;
+        
+        slider.oninput = function() {
+          output.innerHTML = this.value;
+        }
+    </script>
 
     <script src="static/vendor/jquery/jquery.min.js"></script>
     <script src="static/scripts/klorofil-common.js"></script>
+
     <!-- Start of controls script -->
-    
     <script type=text/javascript>
         $(function() {
           $('button#left').on('click', function(e) {
@@ -277,71 +333,119 @@
             return false;
           });
         });
-</script>
+    </script>
     <script type=text/javascript>
-    $(function() {
-      $('button#right').on('click', function(e) {
-        e.preventDefault()
-        $.getJSON('/right',
-            function(data) {
-          //do nothing
+        $(function() {
+        $('button#right').on('click', function(e) {
+            e.preventDefault()
+            $.getJSON('/right',
+                function(data) {
+            //do nothing
+            });
+            return false;
         });
-        return false;
-      });
-    });
-</script>
+        });
+    </script>
     <script type=text/javascript>
-    $(function() {
-      $('button#start').on('click', function(e) {
-        e.preventDefault()
-        $.getJSON('/start',
-            function(data) {
-          //do nothing
+        $(function() {
+        $('button#start').on('click', function(e) {
+            e.preventDefault()
+            $.getJSON('/start',
+                function(data) {
+            //do nothing
+            });
+            return false;
         });
-        return false;
-      });
-    });
-</script>
+        });
+    </script>
     <script type=text/javascript>
-    $(function() {
-      $('button#stop').on('click', function(e) {
-        e.preventDefault()
-        $.getJSON('/stop',
-            function(data) {
-          //do nothing
+        $(function() {
+        $('button#stop').on('click', function(e) {
+            e.preventDefault()
+            $.getJSON('/stop',
+                function(data) {
+            //do nothing
+            });
+            return false;
         });
-        return false;
-      });
-    });
-</script>
+        });
+    </script>
     <script type=text/javascript>
-    $(function() {
-      $('button#sample').on('click', function(e) {
-        e.preventDefault()
-        $.getJSON('/sample',
-            function(data) {
-          //do nothing
+        $(function() {
+        $('button#sample').on('click', function(e) {
+            e.preventDefault()
+            $.getJSON('/sample',
+                function(data) {
+            //do nothing
+            });
+            return false;
         });
-        return false;
-      });
-    });
-</script>
+        });
+    </script>
+    
+    <script type=text/javascript>
+        $(function() {
+        $('button#forward').on('click', function(e) {
+            e.preventDefault()
+            console.log("test");
+
+            $.getJSON('/forward',
+                function(data) {
+            //do nothing
+            });
+            return false;
+        });
+        
+        });
+
+    </script>
+
+
 <script type=text/javascript>
     $(function() {
-      $('button#forward').on('click', function(e) {
+    $('button#backward').on('click', function(e) {
         e.preventDefault()
-        $.getJSON('/forward',
+
+        $.getJSON('/backward',
             function(data) {
-          //do nothing
+        //do nothing
         });
         return false;
-      });
+    });
     });
 </script>
-<!-- End of Control Script -->
-</script>
-<!-- Script to run the program -->
+
 <script type=text/javascript>
+    $(function() {
+    $('button#find_north').on('click', function(e) {
+        e.preventDefault()
+
+        $.getJSON('/find_north',
+            function(data) {
+        //do nothing
+        });
+        return false;
+    });
+    });
+</script>
+
+<script type=text/javascript>
+    $(function() {
+    $('button#find_south').on('click', function(e) {
+        e.preventDefault()
+
+        $.getJSON('/find_south',
+            function(data) {
+        //do nothing
+        });
+        return false;
+    });
+    });
+</script>
+        <!-- End of Control Script -->
+
+    <!-- Script to run the program -->
+    <!-- <script type=text/javascript>
 $(function() {
   $('button#kml').on('click', function(e) {
     e.preventDefault()
@@ -352,80 +456,212 @@ $(function() {
     return false;
   });
 });
-</script>
+</script> -->
 
-<!-- Script to update data on realtime -->
-<!-- <script>
-    $(function () {
-       window.setInterval(function () {
-          loadNew()
-       }, 300)
-       function loadNew() {
-          $.ajax({
-             url: "/updateData",
-             type: "POST",
-             dataType: "json",
-             success: function (data) {
-                document.getElementById('data1').innerHTML = data[0]
-                document.getElementById('data2').innerHTML = data[1]
-                document.getElementById('data3').innerHTML = data[2]
-                document.getElementById('data4').innerHTML = data[3]
-                document.getElementById('data5').innerHTML = data[4]
-                document.getElementById('data6').innerHTML = data[5]
-                document.getElementById('data7').innerHTML = data[6]
-                document.getElementById('data8').innerHTML = data[7]
-                document.getElementById('data9').innerHTML = data[8]
-                document.getElementById('data10').innerHTML = data[9]
-             }
-          });
-       }
-    });
- </script> -->
- <!-- On off Button -->
- <script >
+    <!-- On off Button -->
+    <script>
 
-    function loadNew() {
-          $.ajax({
-             url: "/updateData",
-             type: "POST",
-             dataType: "json",
-             success: function (data) {
-                document.getElementById('data1').innerHTML = data[0]
-                document.getElementById('data2').innerHTML = data[1]
-                document.getElementById('data3').innerHTML = data[2]
-                document.getElementById('data4').innerHTML = data[3]
-                document.getElementById('data5').innerHTML = data[4]
-                document.getElementById('data6').innerHTML = data[5]
-                document.getElementById('data7').innerHTML = data[6]
-                document.getElementById('data8').innerHTML = data[7]
-                document.getElementById('data9').innerHTML = data[8]
-                document.getElementById('data10').innerHTML = data[9]
-             }
-          });
-       }
-    function onoff(){
-        myVar = setInterval(loadNew, 300); 
+        function loadNew() {
+            $.ajax({
+                url: "/updateData",
+                type: "POST",
+                dataType: "json",
+                success: function (data) {
+                    document.getElementById('data1').innerHTML = data[0]
+                    document.getElementById('data2').innerHTML = data[1]
+                    document.getElementById('data3').innerHTML = data[2]
+                    document.getElementById('data4').innerHTML = data[3]
+                    document.getElementById('data5').innerHTML = data[4]
+                    document.getElementById('data6').innerHTML = data[5]
+                    document.getElementById('data7').innerHTML = data[6]
+                    document.getElementById('data8').innerHTML = data[7]
+                    document.getElementById('data9').innerHTML = data[8]
+                    document.getElementById('data10').innerHTML = data[9]
+                }
+            });
+        }
+        function onoff() {
+            myVar = setInterval(loadNew, 2000);
         };
-    function stop(){
-        console.log("puki")
-        console.log(myVar);
-        window.clearInterval(myVar)
-    }
-    
+        function stop() {
+            console.log(myVar);
+            window.clearInterval(myVar)
+        }
+
     </script>
+
     <script>
         function myFunction() {
-          var x = document.getElementById("myDIV");
-          if (x.style.display === "none") {
-            x.style.display = "block";
-          } else {
-            x.style.display = "none";
-          }
+            var x = document.getElementById("myDIV");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
         }
-        </script>
-
-
+    </script>
     
+    <!-- Script to show leaflet map -->
+    <script>
+
+        var mymap = L.map('mapid').setView([3.119629449776096, 101.65642710502878], 18);
+        L.tileLayer('https://{s}.google.com/vt/lyrs=s&?x={x}&y={y}&z={z}', {
+            maxZoom: 22,
+            subdomains: ['mt0','mt1','mt2','mt3'],
+        }).addTo(mymap);
+        
+        const api_url = 'http://127.0.0.1:5000/get_location';
+        
+        let firstTime = true;
+        var boatIcon = L.icon({
+            iconUrl: './static/img/boat_2.png',
+            iconSize:     [50, 32], // size of the icon
+            iconAnchor:   [25, 16], // point of the icon which will correspond to marker's location
+        });
+
+        let marker = L.marker([0, 0], {icon: boatIcon}).addTo(mymap);
+
+        
+        
+        async function getLocation() {
+            const response = await fetch(api_url);
+            const data = await response.json();
+            var latitude = data[0];
+            var longitude = data[1];
+
+            console.log(latitude);
+            console.log(longitude);
+
+            // Always set the view to current lat lon and zoom!
+            if (firstTime) {
+                mymap.setView([latitude, longitude]);
+            }
+            firstTime=false;
+            marker.setLatLng([latitude, longitude]);
+        }
+
+        getLocation();
+
+        function onGPS() {
+            gps = setInterval(getLocation, 2000);
+        };
+        function offGPS() {
+            console.log(gps);
+            window.clearInterval(gps)
+        };
+        // myVar = setInterval(getLocation, 1000);
+        // window.clearInterval(myVar)
+
+        // Get sampling stations data
+        var test = '{{data}}';
+        try {
+            var polygons = {{polygon | safe}};
+        }
+        catch(err) {
+            var polygons = [0];
+        }
+        
+
+       console.log(polygons);
+
+        // Clean the string
+        console.log(test.replace(/[\[\(\)\]]/g, ''));
+        test = test.replace(/[\[\(\)\]]/g, '');
+        test = test.split(",");
+        console.log(test.length);
+        
+        // get the lat and lon in a list
+        var lat = [];
+        var lon = [];
+
+        for (x in test){
+            console.log(test[x]);
+            if (x%2==0){
+                lat.push(test[x])
+            }
+            else{lon.push(test[x])}            
+        }
+
+        // Create new marker
+        console.log(lon)
+        for (i = 0; i < lon.length; i++) {
+            console.log(lat[i],lon[i]);
+            L.marker([lat[i], lon[i]]).addTo(mymap);
+        }
+
+        // Create polygon
+        try{
+            for (i = 0; i < polygons.length; i++){
+                
+                console.log(polygons[i].latitude)
+                var coords = [];
+                for (j = 0; j<polygons[i].latitude.length;j++){
+                    console.log(polygons[i].latitude[j])
+                    console.log(polygons[i].longitude[j]) 
+                    coords.push([polygons[i].latitude[j],polygons[i].longitude[j]])         
+                }
+                L.polygon(coords).addTo(mymap);
+
+            }
+        }catch(err) {
+           console.log(err)
+        }
+
+
+        // Set the number icon for water sampling pathway
+        var marker_tes = '{{marker}}';
+        var bestpath = '{{bestpath}}';
+        console.log(marker_tes);
+        console.log(bestpath);
+
+        // Clean the string
+        marker_tes = marker_tes.replace(/[\[\(\)\]]/g, '');
+        marker_tes = marker_tes.split(",");
+        console.log(marker_tes.length);
+
+        bestpath = bestpath.replace(/[\[\(\)\]]/g, '');
+        bestpath = bestpath.split(",");
+        console.log(bestpath.length);
+
+        // get the lat and lon in a list
+        var lat = [];
+        var lon = [];
+        for (x in bestpath){
+            console.log(bestpath[x]);
+            if (x%2==0){
+                lat.push(bestpath[x])
+            }
+            else{lon.push(bestpath[x])}            
+        }
+
+         
+
+        // Create new marker
+        console.log(lon)
+        for (i = 0; i < lon.length; i++) {
+            console.log(lat[i],lon[i]);
+            L.marker([lat[i], lon[i]]).addTo(mymap);
+        }
+
+        for (i = 0; i < marker_tes.length; i++) {
+            console.log(marker_tes[i]);
+            L.marker([lat[i], lon[i]],
+            {icon:L.divIcon({ 
+                iconSize: new L.Point(50, 50), 
+                html: '<div style="font-size: 14pt; color : red">'+i+'</div>',
+                className: 'dummy'
+                    })}
+            ).addTo(mymap);
+        }
+
+
+                    
+    </script>
+
+
+
+
+
 </body>
 
 </html>

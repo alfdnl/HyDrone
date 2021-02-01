@@ -1,7 +1,7 @@
 import numpy as np, random, operator, pandas as pd, matplotlib.pyplot as plt
 
 # Create necessary classes and functions
-# Create class to handle "cities"
+# Create class to handle "markers"
 
 from math import radians, cos, sin, asin, sqrt
 
@@ -22,19 +22,19 @@ def haversine(lon1, lat1, lon2, lat2):
     return round(c * r,3)
 
 
-class City:
+class Marker:
     def __init__(self, x, y):
         '''
-        Intialize the coordinates for the cities
+        Intialize the coordinates for the markers
         '''
         self.x = x
         self.y = y
     
-    def distance(self, city):
+    def distance(self, Marker):
         '''
-        Calculate the distance between 2 cities
+        Calculate the distance between 2 markers
         '''
-        distance = haversine(self.x,self.y,city.x,city.y)
+        distance = haversine(self.x,self.y,Marker.x,Marker.y)
         return distance
     
     def __repr__(self):
@@ -62,13 +62,13 @@ class Fitness:
         if self.distance ==0:
             pathDistance = 0
             for i in range(0, len(self.route)):
-                fromCity = self.route[i]
-                toCity = None
+                fromMarker = self.route[i]
+                toMarker = None
                 if i + 1 < len(self.route):
-                    toCity = self.route[i + 1]
+                    toMarker = self.route[i + 1]
                 else:
-                    toCity = self.route[0]
-                pathDistance += fromCity.distance(toCity)
+                    toMarker = self.route[0]
+                pathDistance += fromMarker.distance(toMarker)
             self.distance = pathDistance
         return self.distance
     
@@ -85,9 +85,9 @@ class Fitness:
 
 # Route generator
 
-def createRoute(cityList, home):
-    ''' Create route by random the list of cities '''
-    route = random.sample(cityList, len(cityList))
+def createRoute(MarkerList, home):
+    ''' Create route by random the list of markers '''
+    route = random.sample(MarkerList, len(MarkerList))
     route.remove(home)
     route.insert(0,home)
     route.append(home)
@@ -97,14 +97,14 @@ def createRoute(cityList, home):
 
 # Create first "population" (list of routes)
 
-def initialPopulation(popSize, cityList , home):
+def initialPopulation(popSize, MarkerList , home):
     '''
     Create a list of routes as initial population
     '''
     population = []
 
     for i in range(0, popSize):
-        population.append(createRoute(cityList, home))
+        population.append(createRoute(MarkerList, home))
     return population
 
 
@@ -210,17 +210,17 @@ def breedPopulation(matingpool, eliteSize):
 
 def mutate(individual, mutationRate, home):
     '''
-    Swapping the cities to make the route not the same as the generations before
+    Swapping the markers to make the route not the same as the generations before
     '''
     for swapped in range(len(individual)):
         if(random.random() < mutationRate):
             swapWith = int(random.random() * len(individual))
             
-            city1 = individual[swapped]
-            city2 = individual[swapWith]
+            Marker1 = individual[swapped]
+            Marker2 = individual[swapWith]
             
-            individual[swapped] = city2
-            individual[swapWith] = city1
+            individual[swapped] = Marker2
+            individual[swapWith] = Marker1
     individual = [i for i in individual if i != home]
     individual.insert(0,home)
     individual.append(home)
@@ -277,10 +277,10 @@ def geneticAlgorithm(population,home, popSize, eliteSize, mutationRate, generati
 
 # ## Running the genetic algorithm
 
-# Create list of cities
+# Create list of markers
 
 
-# cities = [(3.119629449776096, 101.65642710502878),
+# markers = [(3.119629449776096, 101.65642710502878),
 # (3.119570613676185, 101.65657144167113),
 # (3.11950698203576, 101.65672277258696),
 # (3.119450850925013, 101.65687356698822),
@@ -309,22 +309,22 @@ def geneticAlgorithm(population,home, popSize, eliteSize, mutationRate, generati
 
 
 
-# cityList = []
-# for i in range(len(cities)):
-#     cityList.append(City(x=cities[i][0], y=cities[i][1]))
+# MarkerList = []
+# for i in range(len(markers)):
+#     MarkerList.append(Marker(x=markers[i][0], y=markers[i][1]))
 
-# home = cityList[0]
+# home = MarkerList[0]
 
 # ## Marker mapping
 # mapping_dict = {}
-# for idx, i in enumerate(cityList):
+# for idx, i in enumerate(MarkerList):
 #     mapping_dict[i] = idx
 
 # print(mapping_dict)
 
 # # Run the genetic algorithm
 
-# bestpath = geneticAlgorithm(population=cityList,home=home, popSize=100, eliteSize=20, mutationRate=0.01, generations=500)
+# bestpath = geneticAlgorithm(population=MarkerList,home=home, popSize=100, eliteSize=20, mutationRate=0.01, generations=500)
 # for idx,i in enumerate(bestpath):
 #     # bestroute.append(mapping_dict[i])
 #     print(mapping_dict[i])
@@ -333,7 +333,7 @@ def geneticAlgorithm(population,home, popSize, eliteSize, mutationRate, generati
 # tes = [1,1,2,3,4]
 # tes = [i for i in tes if i != 1]
 # tes
-# route = random.sample(cityList, len(cityList))
+# route = random.sample(MarkerList, len(MarkerList))
 # type(route[0])
 # route.remove(home)
 # route.insert(0,home)

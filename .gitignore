@@ -1,7 +1,15 @@
-__pycache__/app.cpython-37.pyc
-__pycache__/genetic_algorithm_TSP.cpython-37.pyc
-__pycache__/HyD.cpython-37.pyc
+build/
+env/
+.env
+.vscode
+
+# Compiled Python bytecode
 __pycache__/
-*.pyc
-*.pyc
+*.py[cod]
+
+# Log files
+*.log
+
+.DS_Store
+Thumbs.db
 *.pyc

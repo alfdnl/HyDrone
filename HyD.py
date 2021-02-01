@@ -1,6 +1,8 @@
+  
 import CONN
 import time
 from sensors import Sensor
+import threading
 
 
 class HyDrone:
@@ -8,10 +10,27 @@ class HyDrone:
         self.HOST = ipAddress
         self.PORT = portNumber
         self.s = None
-        self.intervalTime = 1
+        self.intervalTime = 1   
+        self.connect = False
+        self.z = None
 
+    def von(self):
+        while self.connect == True:
+            self.s = CONN.setupConnection(self.HOST, self.PORT, self.s)
+    
+    def disconnectWithRobot(self):
+        self.connect = False
+        if self.s != None:
+            self.s.close()
+    
+    def connectToRobot(self):
+        self.connect = True
+        if self.s == None or self.s.close:
+            self.z = threading.Thread(target=self.von)
+            self.z.start()
+    
     def sendMessage(self, message):
-        return CONN.sendMessage(message, self.HOST, self.PORT, self.s, self.intervalTime)
+        return CONN.sendMessage(message,self.s)
 
     def startMotors(self):
         """ Start the Motors, the program will sleep for 7 seconds to start the motors
@@ -24,7 +43,6 @@ class HyDrone:
                 motor is on
             """
         s = self.sendMessage("CONTROL,MOTOR_ON")
-        time.sleep(7.0)
         return s
 
     def stopMotors(self):
@@ -63,7 +81,6 @@ class HyDrone:
                             """
         return self.sendMessage("CONTROL,STOP_RECORDING")
    
-    
     def moveForward(self, leftSpeed, rightSpeed):
         """ Move Backward, will move/turn the both motor forward
                             Parameters
@@ -92,8 +109,14 @@ class HyDrone:
                             String
                                 robot is moving back speed
                             """
-        return self.sendMessage("CONTROL,MOVE_BACKWARD," + str(leftSpeed) + "," + str(rightSpeed) + "")
+        return self.sendMessage("CONTROL,MOVE_BACKWARD," + leftSpeed + "," + rightSpeed + "")
     
+    def moveRight2(self,speed):
+        return self.sendMessage("CONTROL,MOVE_RIGH," + speed + "")
+
+    def moveLeft2(self, speed):
+        return self.sendMessage("CONTROL,MOVE_LEF," + speed + "")
+
     def moveRight(self, speed):
         """ Move to the Right, will move/turn the left motor
                             Parameters
@@ -211,7 +234,3 @@ class HyDrone:
 
     def stopDataRecord(self):
         self.sendMessage("CONTROL,STOP_RECORD_DATA")
-
-
-    # TODO
-    # More Functions for Controlling

@@ -10,14 +10,6 @@ from sensors import Sensor as s
 from math import radians, cos, sin, asin, sqrt
 p = HyD.HyDrone("100.96.1.19", 51234)
 
-
-## TO-Do
-# 1. Make the codes runs in the loop
-# 2. Use the real data set
-# 3. Make the code uses the real function to move the robot.
-# 4. Make a function to check wheter it has arrived to the next marker
-# 5. Make the robot move continously until it reached back to it current position.
-
 geodesic = pyproj.Geod(ellps='WGS84')
 
 # Functions
@@ -48,14 +40,21 @@ def haversine(lon1, lat1, lon2, lat2):
 
 def turn_right():
     print("Move right")
-    p.moveRight("1200")
+    # p.moveRight("1200")
+    p.sendMessage("CONTROL,MOVE_RIGH1,1200")
+    time.sleep(1)
+    p.moveForward("1000","1000")
 
 def turn_left():
     print("Move left")
-    p.moveLeft("1200")
+    # p.moveLeft("1200")
+    # time.sleep(1)
+    p.sendMessage("CONTROL,MOVE_LEF1,1200")
+    time.sleep(1)
+    p.moveForward("1000","1000")
 
 def move_forward():
-    p.moveForward("1200")
+    p.moveForward("1300","1300")
     return
 
 def get_current_bearing():
@@ -121,9 +120,13 @@ def get_current_location():
 # ]
 
 ## Dummy marker to test
-markers = [(3.1191856838759398, 101.65848076639922) # the center of the lake from kayak place
+markers = [(3.1191, 101.658) # the center of the lake from kayak place
 ]
 
+p.connectToRobot()
+time.sleep(2)
+p.startMotors()
+time.sleep(3)
 ###
 # To Test: 
 ## Can the robot turn until its current bearing == to the bearing calculated
@@ -143,7 +146,7 @@ for marker in markers:
 
     # Calculate bearing from robot to marker
     marker_direction = get_bearing(current_location[0],current_location[1],marker[0],marker[1])
-    marker_direction = abs(marker_direction)
+    # marker_direction = abs(marker_direction)
     print("Bearing to marker from robot: ", marker_direction)
 
     # Calculate distance between marker and current location
@@ -151,53 +154,47 @@ for marker in markers:
 
     # calculate distance to marker
     distance_to_marker = haversine(current_location[1],current_location[0],marker[1],marker[0])
-    print(distance_to_marker)
+    # print(distance_to_marker)
 
     while distance_to_marker > 0.001:
         print("Current distance to maker: ",distance_to_marker)
-        while abs(robot_bearing - marker_direction) > 5:
+        while abs(robot_bearing - marker_direction) > 30:
             
-            print(abs(robot_bearing - marker_direction))
-            if abs(marker_direction - robot_bearing)  <= 180:
-                time.sleep(0.5)
+            print(marker_direction - robot_bearing)
+            if marker_direction - robot_bearing  >=  0:
                 turn_right()
-                robot_bearing = get_current_bearing()
+                time.sleep(1)
 
-            else:
-                time.sleep(0.5)
+            else:                
                 turn_left()
-                robot_bearing = get_current_bearing()
+                time.sleep(1)
+            
+            robot_bearing = get_current_bearing()
+            
         
         print("Direction reached")
-        break
+        # break
         
-    #     for _ in range(5):
-    #         move_forward()
-    #         time.sleep(0.02)
         
-    #     # update new distance
-    #     current_location = get_current_location()
-    #     distance_to_marker = haversine(current_location[1],current_location[0],marker[1],marker[0])
-    # # visited_node.append(marker)
-    # # current_location = marker
-    # print("Marker Reached")
+        move_forward()
+        time.sleep(5)
+        p.moveForward("1000","1000")
 
+        
+        # update new distance
+        current_location = get_current_location()
+        distance_to_marker = haversine(current_location[1],current_location[0],marker[1],marker[0])
+
+        ## Get current direction
+        marker_direction = get_bearing(current_location[0],current_location[1],marker[0],marker[1])
+        
+    # # visited_node.append(marker)
+    current_location = marker
+    print("Marker Reached")
+p.stopMotors()
+
+time.sleep(2)
+
+p.disconnectWithRobot()
 print("Goal Achieved")
 
-
-# marker_direction = get_bearing(robot_coord[0],robot_coord[1],marker_coord[0],marker_coord[1])
-
-# while robot_direction != marker_direction:
-#     if marker_direction <= 180:
-#         robot_direction = turn_right(robot_direction) 
-#         print(robot_direction)
-#     else:
-#         robot_direction = turn_left(robot_direction) 
-#         print(robot_direction)
-
-# print("Direction matched!\n",robot_direction)
-# Move for 5 secs and repeat until target reached
-
-# To check that the robot is at the marker
-# calculate the distance between the marker and the robot
-# If the distance is less than a meter, check as visited.

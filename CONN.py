@@ -8,19 +8,22 @@ def setupConnection(HOST, PORT, s):
         af, socktype, proto, canonname, sa = res
         try:
             s = socket.socket(af, socktype, proto)
+            s.settimeout(2)
         except socket.error as msg:
             s = None
+            print(msg)
             continue
         try:
             s.connect(sa)
         except socket.error as msg:
             s.close()
+            print(canonname)
             s = None
             continue
         return s
     if s is None:
         print("could not open socket")
-        sys.exit(1)
+        
 
 
 def messageTo40(mess):
@@ -30,8 +33,8 @@ def messageTo40(mess):
     return mess
 
 
-def sendMessage(mess, HOST, PORT, s, intervalTime):
-    s = setupConnection(HOST, PORT, s)
+def sendMessage(mess, s):
+    #s = setupConnection(HOST, PORT, s)
     mess = messageTo40(mess)
     try:
         message = bytes(mess, 'utf-8')
@@ -39,8 +42,8 @@ def sendMessage(mess, HOST, PORT, s, intervalTime):
         data = s.recv(1024)
         return str(data, 'utf-8')
     except:
+        #s = setupConnection(HOST, PORT, s)
         return "error"
-        s = setupConnection(HOST, PORT, s)
-    time.sleep(intervalTime)
+    #time.sleep(intervalTime)
 
 # print(sendMessage("CONTROL,MOTOR_OFF"))
